@@ -21,59 +21,107 @@ mongoose.connect('mongodb://localhost/virtualDars').then(()=>{
 // app.listen(port, () => {
 //   console.log(`[server]: Server is running at http://localhost:${port}`);
 // });
-interface iAuthor  {
+// interface iAuthor  {
+//   firstName: string,
+//   lastName: string,
+//   email: string
+// }
+// interface iBook{
+//   title: string
+//   authorId: mongoose.Schema.Types.ObjectId
+// }
+// const Author = mongoose.model('Author', new mongoose.Schema<iAuthor>({
+//   firstName:{type:String, required: true},
+//   lastName:{type: String, required: true},
+//   email:{type: String, required: true}
+// }))
+// const Book = mongoose.model('Book', new mongoose.Schema<iBook>({
+//   title: {type:String, required: true},
+//   authorId:{type:mongoose.Schema.Types.ObjectId, ref: "Author"}
+// }))
+
+// async function creatAuthor(firstName:string, lastName:string, email:string) {
+//     const author = new Author({
+//       firstName,lastName,email
+//     })
+//     const saveAuthor = await author.save()
+//     console.log(saveAuthor);
+    
+// }
+// async function createBook(title:string, authorId: string) {
+//   const book = new Book({
+//     title, authorId,
+//   })
+//   const saveBook = await book.save()
+//   console.log(saveBook);
+  
+  
+// }
+
+// async function listsBook (){
+//   const books = await Book
+//   .find()
+//   .populate('authorId', 'firstName -_id')//bunda populateni birinchi qiymatiga book schemada kelgan o'zgaruvchi ikkinchisiga esa bizga kerak bo'lgan barcha qiymatlar kiritiladi
+//   .select('title authorId')
+//   console.log(books);
+  
+// }
+
+// // creatAuthor('Zayniddin',"Ziydan","zidan@gmail.com")
+// // createBook('Node js qollanma', '65d9730154716616085a4a6e')
+// listsBook()
+
+
+
+
+
+
+interface iAuthor {
   firstName: string,
   lastName: string,
   email: string
 }
-interface iBook{
+interface iBook {
   title: string
   authorId: mongoose.Schema.Types.ObjectId
 }
-const Author = mongoose.model('Author', new mongoose.Schema<iAuthor>({
-  firstName:{type:String, required: true},
-  lastName:{type: String, required: true},
-  email:{type: String, required: true}
-}))
-const Book = mongoose.model('Book', new mongoose.Schema<iBook>({
-  title: {type:String, required: true},
-  authorId:{type:mongoose.Schema.Types.ObjectId, ref: "Author"}
-}))
 
-async function creatAuthor(firstName:string, lastName:string, email:string) {
-    const author = new Author({
-      firstName,lastName,email
-    })
-    const saveAuthor = await author.save()
-    console.log(saveAuthor);
-    
-}
-async function createBook(title:string, authorId: string) {
+const authorSchema = new mongoose.Schema<iAuthor>({
+  firstName:{type:String, required:true},
+  lastName:{type:String, required: true},
+  email:{type:String, required:true}
+})
+const bookSchema = new mongoose.Schema<iBook>({
+  title: { type: String, required: true },
+  authorId:{type:authorSchema, required:true}
+})
+
+const Author = mongoose.model("Author", authorSchema)
+const Book = mongoose.model("Book", bookSchema)
+
+async function createBook(title:string, authorId:iAuthor) {
   const book = new Book({
-    title, authorId,
+    title, authorId
   })
-  const saveBook = await book.save()
+  const saveBook = book.save()
   console.log(saveBook);
   
-  
 }
 
-async function listsBook (){
-  const books = await Book
-  .find()
-  .populate('authorId', 'firstName -_id')
-  .select('title authorId')
+async function listBook() {
+    const books = await Book
+    .find()
+    // .select('title authorId')
   console.log(books);
   
 }
 
-// creatAuthor('Zayniddin',"Ziydan","zidan@gmail.com")
-// createBook('Node js qollanma', '65d9730154716616085a4a6e')
-listsBook()
-
-
-
-
-
-
+// createBook('Nextjs qollanma',
+// new Author({
+//   firstName: 'Ziynatilloh',
+//   lastName: "Muhammadjonov",
+//   email: 'zmorzugrand@gmail.com'
+// })
+// )
+listBook()
 
